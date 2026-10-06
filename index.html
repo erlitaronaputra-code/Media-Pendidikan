@@ -349,22 +349,23 @@
             });
         });
 
-        function renderMediaEmbed(url) {
-            if (url.includes('youtube.com') || url.includes('youtu.be')) {
-                let videoId = '';
-                if (url.includes('youtu.be/')) {
-                    videoId = url.split('youtu.be/')[1].split('?')[0];
-                } else if (url.includes('watch?v=')) {
-                    videoId = url.split('watch?v=')[1].split('&')[0];
-                }
-                if (videoId) {
-                    return `<div class="media-container"><iframe src="https://www.youtube.com/embed/${videoId}" allowfullscreen></iframe></div>`;
-                }
-            } else if (url.match(/\.(jpeg|jpg|png|gif)$/i)) {
-                return `<div class="media-container"><img src="${url}" alt="Preview Karya"></div>`;
-            }
-            return `<a href="${url}" target="_blank" class="btn-link-demo">🔗 Buka Demo / File Projek</a>`;
+function renderMediaEmbed(url) {
+    if (url.includes('youtube.com') || url.includes('youtu.be')) {
+        let videoId = '';
+        if (url.includes('youtu.be/')) {
+            videoId = url.split('youtu.be/')[1].split('?')[0];
+        } else if (url.includes('watch?v=')) {
+            videoId = url.split('watch?v=')[1].split('&')[0];
         }
+        if (videoId) {
+            return `<div class="media-container"><iframe src="https://www.youtube.com/embed/${videoId}" allowfullscreen></iframe></div>`;
+        }
+    } else if (url.match(/\.(jpeg|jpg|png|gif)$/i)) {
+        return `<div class="media-container"><img src="${url}" alt="Preview Karya"></div>`;
+    } 
+    // Jika berupa tautan web atau file HTML interaktif
+    return `<a href="${url}" target="_blank" class="btn-link-demo" style="background: linear-gradient(135deg, #4f46e5, #06b6d4); color: white; text-align: center; padding: 12px; border-radius: 8px; font-weight: bold; display: block; text-decoration: none; margin-bottom: 15px;">🎮 Jalankan & Operasikan Media Web</a>`;
+}
 
         function loadProjects() {
             fetch(SCRIPT_URL + "?action=getPublicProjects")
