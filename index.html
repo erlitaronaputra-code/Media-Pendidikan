@@ -335,12 +335,14 @@
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwsTI6pTy0RB5-Ntf1EdaoJy539KTKfF3SPy26xpzV-DUKxfeEKQaaDW7BKQYp_Bc41tA/exec";
 
-        function switchView(viewName) {
+        function switchView(viewName, element) {
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
 
             document.getElementById('view-' + viewName).classList.add('active');
-            event.currentTarget.classList.add('active');
+            if (element) {
+                element.classList.add('active');
+            }
         }
 
         document.getElementById('projekForm').addEventListener('submit', function(e) {
