@@ -474,7 +474,7 @@
             });
         }
 
-        function postComment(idProjek) {
+function postComment(idProjek) {
             const namaInput = document.getElementById('name-' + idProjek);
             const textInput = document.getElementById('text-' + idProjek);
             
@@ -490,15 +490,16 @@
                 komentar: textInput.value
             };
 
+            // Menggunakan mode no-cors agar lolos dari blokir CORS browser saat mengirim ke Apps Script
             fetch(SCRIPT_URL, {
                 method: 'POST',
+                mode: 'no-cors',
                 body: JSON.stringify(data)
             })
-            .then(res => res.json())
-            .then(res => {
+            .then(() => {
                 namaInput.value = "";
                 textInput.value = "";
-                loadComments(idProjek);
+                setTimeout(() => loadComments(idProjek), 1000); // Muat ulang komentar setelah 1 detik
             })
             .catch(err => alert("Gagal mengirim komentar."));
         }
