@@ -156,7 +156,7 @@
 
         .project-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 24px;
         }
 
@@ -249,6 +249,46 @@
             cursor: pointer;
             font-weight: 600;
             font-size: 0.85rem;
+        }
+
+        /* Styling Komentar */
+        .comments-section {
+            margin-top: 15px;
+            border-top: 1px dashed var(--border-color);
+            padding-top: 12px;
+        }
+        .comment-box {
+            max-height: 120px;
+            overflow-y: auto;
+            font-size: 0.85rem;
+            background: #f8fafc;
+            padding: 8px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+        .comment-item {
+            margin-bottom: 6px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 4px;
+        }
+        .comment-input-group {
+            display: flex;
+            gap: 6px;
+            margin-top: 6px;
+        }
+        .comment-input-group input {
+            padding: 6px 10px;
+            font-size: 0.8rem;
+            border-radius: 6px;
+        }
+        .btn-comment {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -349,23 +389,22 @@
             });
         });
 
-function renderMediaEmbed(url) {
-    if (url.includes('youtube.com') || url.includes('youtu.be')) {
-        let videoId = '';
-        if (url.includes('youtu.be/')) {
-            videoId = url.split('youtu.be/')[1].split('?')[0];
-        } else if (url.includes('watch?v=')) {
-            videoId = url.split('watch?v=')[1].split('&')[0];
+        function renderMediaEmbed(url) {
+            if (url.includes('youtube.com') || url.includes('youtu.be')) {
+                let videoId = '';
+                if (url.includes('youtu.be/')) {
+                    videoId = url.split('youtu.be/')[1].split('?')[0];
+                } else if (url.includes('watch?v=')) {
+                    videoId = url.split('watch?v=')[1].split('&')[0];
+                }
+                if (videoId) {
+                    return `<div class="media-container"><iframe src="https://www.youtube.com/embed/${videoId}" allowfullscreen></iframe></div>`;
+                }
+            } else if (url.match(/\.(jpeg|jpg|png|gif)$/i)) {
+                return `<div class="media-container"><img src="${url}" alt="Preview Karya"></div>`;
+            }
+            return `<a href="${url}" target="_blank" class="btn-link-demo">🔗 Buka Demo / File Projek</a>`;
         }
-        if (videoId) {
-            return `<div class="media-container"><iframe src="https://www.youtube.com/embed/${videoId}" allowfullscreen></iframe></div>`;
-        }
-    } else if (url.match(/\.(jpeg|jpg|png|gif)$/i)) {
-        return `<div class="media-container"><img src="${url}" alt="Preview Karya"></div>`;
-    } 
-    // Jika berupa tautan web atau file HTML interaktif
-    return `<a href="${url}" target="_blank" class="btn-link-demo" style="background: linear-gradient(135deg, #4f46e5, #06b6d4); color: white; text-align: center; padding: 12px; border-radius: 8px; font-weight: bold; display: block; text-decoration: none; margin-bottom: 15px;">🎮 Jalankan & Operasikan Media Web</a>`;
-}
 
         function loadProjects() {
             fetch(SCRIPT_URL + "?action=getPublicProjects")
@@ -391,17 +430,77 @@ function renderMediaEmbed(url) {
                             <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px;"><b>Kelompok:</b> ${p.namaKelompok}</p>
                             ${renderMediaEmbed(p.linkFile)}
                         </div>
-                        <div class="card-footer">
-                            <button class="btn-like" onclick="likeProject('${p.id}')">👍 Suka (${p.likes})</button>
+                        <div>
+                            <div class="card-footer">
+                                <button class="btn-like" onclick="likeProject('${p.id}')">👍 Suka (${p.likes})</button>
+                            </div>
+                            <div class="comments-section">
+                                <div id="comments-${p.id}" class="comment-box">Memuat komentar...</div>
+                                <div class="comment-input-group">
+                                    <input type="text" id="name-${p.id}" placeholder="Nama Anda" style="width: 35%;">
+                                    <input type="text" id="text-${p.id}" placeholder="Tulis komentar..." style="width: 45%;">
+                                    <button class="btn-comment" onclick="postComment('${p.id}')">Kirim</button>
+                                </div>
+                            </div>
                         </div>
                     `;
                     container.appendChild(card);
+                    loadComments(p.id);
                 });
             })
             .catch(err => {
                 const container = document.getElementById('projectContainer');
                 container.innerHTML = `<p style="text-align:center; grid-column: 1/-1; color: var(--text-muted);">Gagal memuat data galeri.</p>`;
             });
+        }
+
+        function loadComments(idProjek) {
+            fetch(SCRIPT_URL + "?action=getComments&id=" + idProjek)
+            .then(res => res.json())
+            .then(comments => {
+                const box = document.getElementById('comments-' + idProjek);
+                if (!comments || comments.length === 0) {
+                    box.innerHTML = `<i style="color: var(--text-muted);">Belum ada komentar.</i>`;
+                    return;
+                }
+                box.innerHTML = comments.map(c => `
+                    <div class="comment-item">
+                        <b>${c.nama}:</b> ${c.komentar}
+                    </div>
+                `).join('');
+            })
+            .catch(err => {
+                document.getElementById('comments-' + idProjek).innerHTML = `Gagal memuat komentar.`;
+            });
+        }
+
+        function postComment(idProjek) {
+            const namaInput = document.getElementById('name-' + idProjek);
+            const textInput = document.getElementById('text-' + idProjek);
+            
+            if (!namaInput.value.trim() || !textInput.value.trim()) {
+                alert("Mohon isi nama dan teks komentar terlebih dahulu.");
+                return;
+            }
+
+            const data = {
+                action: "addComment",
+                idProjek: idProjek,
+                nama: namaInput.value,
+                komentar: textInput.value
+            };
+
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify(data)
+            })
+            .then(res => res.json())
+            .then(res => {
+                namaInput.value = "";
+                textInput.value = "";
+                loadComments(idProjek);
+            })
+            .catch(err => alert("Gagal mengirim komentar."));
         }
 
         function likeProject(id) {
