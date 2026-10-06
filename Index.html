@@ -1,1 +1,82 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pengumpulan Projek Kelompok</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 500px; margin: 40px auto; padding: 20px; background: #f4f7f6; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #333; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; }
+        input, select, textarea { width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
+        button { background: #007bff; color: white; padding: 12px; border: none; border-radius: 4px; cursor: pointer; width: 100%; font-size: 16px; font-weight: bold; }
+        button:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
 
+    <h2>Upload Projek Kelompok</h2>
+    <form id="projekForm">
+        <div class="form-group">
+            <label>Nama Kelompok:</label>
+            <input type="text" id="namaKelompok" required placeholder="Contoh: Kelompok 1 - Melati">
+        </div>
+        <div class="form-group">
+            <label>Judul Projek / Produk:</label>
+            <input type="text" id="judul" required placeholder="Contoh: Media Pembelajaran Tata Surya">
+        </div>
+        <div class="form-group">
+            <label>Kategori:</label>
+            <select id="kategori">
+                <option value="Media Digital">Media Digital</option>
+                <option value="Video Pembelajaran">Video Pembelajaran</option>
+                <option value="Infografis">Infografis</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Link File / Karya (Google Drive / Canva / YouTube):</label>
+            <input type="url" id="linkFile" required placeholder="https://...">
+        </div>
+        <button type="submit" id="btnSubmit">Kirim Projek</button>
+    </form>
+
+    <script>
+        // Masukkan URL Web App Apps Script Anda di sini
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwOYulfTUaTcbOKzD2RylZ_1L-4U0easlHONzC6fMzp54NlTdvlWiVNu3vEhiPOhIw/exec";
+
+        document.getElementById('projekForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnSubmit');
+            btn.innerText = "Mengirim...";
+            btn.disabled = true;
+
+            const data = {
+                action: "submitProjek",
+                namaKelompok: document.getElementById('namaKelompok').value,
+                judul: document.getElementById('judul').value,
+                kategori: document.getElementById('kategori').value,
+                linkFile: document.getElementById('linkFile').value
+            };
+
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify(data)
+            })
+            .then(res => res.json())
+            .then(result => {
+                alert(result.message);
+                document.getElementById('projekForm').reset();
+                btn.innerText = "Kirim Projek";
+                btn.disabled = false;
+            })
+            .catch(err => {
+                console.error(err);
+                alert("Terjadi kesalahan saat mengirim data.");
+                btn.innerText = "Kirim Projek";
+                btn.disabled = false;
+            });
+        });
+    </script>
+</body>
+</html>
