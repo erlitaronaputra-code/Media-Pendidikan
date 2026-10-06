@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Etalase Projek Pembelajaran Siswa</title>
+    <title>Etalase Projek Pembelajaran Peserta</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -47,7 +47,6 @@
             font-size: 1.1rem;
         }
 
-        /* Navigasi Tab Warna-warni */
         .site-nav {
             display: flex;
             justify-content: center;
@@ -134,7 +133,6 @@
             font-size: 0.95rem;
             font-family: inherit;
             background-color: #f8fafc;
-            transition: border-color 0.2s;
         }
 
         input:focus, select:focus {
@@ -154,11 +152,6 @@
             font-size: 1rem;
             width: 100%;
             box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
-            transition: transform 0.2s;
-        }
-
-        button.btn-submit:hover {
-            transform: translateY(-2px);
         }
 
         .project-grid {
@@ -178,15 +171,8 @@
             justify-content: space-between;
             position: relative;
             overflow: hidden;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
 
-        .project-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-        }
-
-        /* Garis gradasi warna-warni di atas kartu */
         .project-card::before {
             content: '';
             position: absolute;
@@ -197,7 +183,6 @@
             background: linear-gradient(90deg, #4f46e5, #06b6d4, #10b981);
         }
 
-        /* Badge kategori dengan warna dinamis */
         .badge {
             padding: 5px 12px;
             border-radius: 20px;
@@ -244,11 +229,6 @@
             font-weight: 600;
             font-size: 0.85rem;
             margin-bottom: 15px;
-            transition: background 0.2s;
-        }
-
-        .btn-link-demo:hover {
-            background: #e2e8f0;
         }
 
         .card-footer {
@@ -269,26 +249,21 @@
             cursor: pointer;
             font-weight: 600;
             font-size: 0.85rem;
-            transition: background 0.2s;
-        }
-
-        .btn-like:hover {
-            background: #d1fae5;
         }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>✨ Etalase Karya Siswa</h1>
+        <h1>✨ Etalase Karya Peserta</h1>
         <p>Pusat pameran digital karya kreatif dan media pembelajaran kelompok.</p>
     </header>
 
-    <!-- Tombol Navigasi -->
-   <div class="site-nav">
-    <button class="tab-btn active" onclick="switchView('galeri', this)">🖼️ Lihat Galeri Karya</button>
-    <button class="tab-btn" onclick="switchView('upload', this)">📤 Form Upload Siswa</button>
-</div>
+    <!-- Tombol Navigasi Tab -->
+    <div class="site-nav">
+        <button class="tab-btn active" onclick="switchView('galeri', this)">🖼️ Lihat Galeri Karya</button>
+        <button class="tab-btn" onclick="switchView('upload', this)">📤 Form Upload Peserta</button>
+    </div>
 
     <!-- PILIHAN 1: MODE GALERI KARTU -->
     <div id="view-galeri" class="view-section active">
@@ -298,7 +273,7 @@
         </div>
     </div>
 
-    <!-- PILIHAN 2: FORM UPLOAD SISWA -->
+    <!-- PILIHAN 2: FORM UPLOAD Peserta -->
     <div id="view-upload" class="view-section">
         <div class="card">
             <h2>📤 Form Pengumpulan Tugas Kelompok</h2>
@@ -363,4 +338,79 @@
             .then(res => res.json())
             .then(result => {
                 alert(result.message);
-                document
+                document.getElementById('projekForm').reset();
+                btn.innerText = "Kirim Projek ke Guru 🚀";
+                btn.disabled = false;
+            })
+            .catch(err => {
+                alert("Gagal mengirim data.");
+                btn.innerText = "Kirim Projek ke Guru 🚀";
+                btn.disabled = false;
+            });
+        });
+
+        function renderMediaEmbed(url) {
+            if (url.includes('youtube.com') || url.includes('youtu.be')) {
+                let videoId = '';
+                if (url.includes('youtu.be/')) {
+                    videoId = url.split('youtu.be/')[1].split('?')[0];
+                } else if (url.includes('watch?v=')) {
+                    videoId = url.split('watch?v=')[1].split('&')[0];
+                }
+                if (videoId) {
+                    return `<div class="media-container"><iframe src="https://www.youtube.com/embed/${videoId}" allowfullscreen></iframe></div>`;
+                }
+            } else if (url.match(/\.(jpeg|jpg|png|gif)$/i)) {
+                return `<div class="media-container"><img src="${url}" alt="Preview Karya"></div>`;
+            }
+            return `<a href="${url}" target="_blank" class="btn-link-demo">🔗 Buka Demo / File Projek</a>`;
+        }
+
+        function loadProjects() {
+            fetch(SCRIPT_URL + "?action=getPublicProjects")
+            .then(res => res.json())
+            .then(data => {
+                const container = document.getElementById('projectContainer');
+                container.innerHTML = "";
+                if (!data || data.length === 0) {
+                    container.innerHTML = `<p style="text-align:center; grid-column: 1/-1; color: var(--text-muted);">Belum ada karya yang disetujui.</p>`;
+                    return;
+                }
+                data.forEach(p => {
+                    let badgeClass = 'badge-digital';
+                    if (p.kategori === 'Video Pembelajaran') badgeClass = 'badge-video';
+                    if (p.kategori === 'Infografis') badgeClass = 'badge-infografis';
+
+                    const card = document.createElement('div');
+                    card.className = 'project-card';
+                    card.innerHTML = `
+                        <div>
+                            <span class="badge ${badgeClass}">${p.kategori}</span>
+                            <h3>${p.judul}</h3>
+                            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px;"><b>Kelompok:</b> ${p.namaKelompok}</p>
+                            ${renderMediaEmbed(p.linkFile)}
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn-like" onclick="likeProject('${p.id}')">👍 Suka (${p.likes})</button>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            })
+            .catch(err => {
+                const container = document.getElementById('projectContainer');
+                container.innerHTML = `<p style="text-align:center; grid-column: 1/-1; color: var(--text-muted);">Gagal memuat data galeri.</p>`;
+            });
+        }
+
+        function likeProject(id) {
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: "addLike", id: id })
+            }).then(() => loadProjects());
+        }
+
+        loadProjects();
+    </script>
+</body>
+</html>
