@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Etalase Projek Pembelajaran Siswa</title>
-    <!-- Google Fonts untuk tampilan font yang lebih elegan -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -29,7 +28,7 @@
 
         header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
         }
 
         header h1 {
@@ -42,6 +41,39 @@
         header p {
             color: var(--text-muted);
             font-size: 1.05rem;
+        }
+
+        /* Navigasi ala Google Sites (Tab Switcher) */
+        .site-nav {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .tab-btn {
+            background: #e2e8f0;
+            color: var(--text-main);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+        }
+
+        .view-section {
+            display: none;
+        }
+
+        .view-section.active {
+            display: block;
         }
 
         .card {
@@ -95,15 +127,7 @@
             border-radius: 8px;
             font-size: 0.95rem;
             font-family: inherit;
-            transition: all 0.3s ease;
             background-color: #fdfdfd;
-        }
-
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
-            background-color: #fff;
         }
 
         button.btn-submit {
@@ -116,23 +140,267 @@
             font-weight: 600;
             font-size: 1rem;
             width: 100%;
-            transition: transform 0.2s, opacity 0.2s;
-        }
-
-        button.btn-submit:hover {
-            opacity: 0.95;
-            transform: translateY(-1px);
-        }
-
-        .section-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin: 40px 0 20px 0;
-            text-align: center;
-            color: var(--text-main);
         }
 
         .project-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 24
+            gap: 24px;
+        }
+
+        .project-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .badge {
+            background: #eef2ff;
+            color: var(--primary);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 12px;
+        }
+
+        .media-container {
+            width: 100%;
+            height: 180px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .media-container iframe, .media-container img {
+            width: 100%;
+            height: 100%;
+            border: none;
+            object-fit: cover;
+        }
+
+        /* Style untuk Opsi Embed Web Interaktif Langsung */
+        .interactive-preview-container {
+            width: 100%;
+            height: 600px;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            background: white;
+        }
+
+        .interactive-preview-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .btn-link-demo {
+            display: block;
+            padding: 10px;
+            background: #f1f5f9;
+            color: var(--primary);
+            text-align: center;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-bottom: 15px;
+        }
+
+        .card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-top: 1px solid var(--border-color);
+            padding-top: 12px;
+            margin-top: auto;
+        }
+
+        .btn-like {
+            background: #ecfdf5;
+            color: #059669;
+            border: 1px solid #d1fae5;
+            padding: 6px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>✨ Etalase Karya Siswa</h1>
+        <p>Pusat pameran digital karya kreatif dan media pembelajaran kelompok.</p>
+    </header>
+
+    <!-- Tombol Pilihan Tampilan (Ala Google Sites) -->
+    <div class="site-nav">
+        <button class="tab-btn active" onclick="switchView('galeri')">🖼️ Mode Galeri Kartu</button>
+        <button class="tab-btn" onclick="switchView('interaktif')">💻 Mode Media Interaktif (Embed HTML)</button>
+        <button class="tab-btn" onclick="switchView('upload')">📤 Form Upload Siswa</button>
+    </div>
+
+    <!-- PILIHAN 1: MODE GALERI KARTU (Grid Showcase) -->
+    <div id="view-galeri" class="view-section active">
+        <h2 style="text-align:center; margin-bottom:20px;">Daftar Karya Terpilih</h2>
+        <div id="projectContainer" class="project-grid">
+            <p style="text-align:center; grid-column: 1/-1; color: var(--text-muted);">Memuat karya...</p>
+        </div>
+    </div>
+
+    <!-- PILIHAN 2: MODE MEDIA INTERAKTIF (Embed Web Langsung) -->
+    <div id="view-interaktif" class="view-section">
+        <div class="card">
+            <h2>💻 Pratinjau Media Pembelajaran Interaktif</h2>
+            <p style="color: var(--text-muted); margin-bottom: 15px;">Pengunjung dapat langsung memainkan atau melihat media berbasis web interaktif (seperti modul pencegahan bullying atau media HTML lainnya) di dalam wadah ini.</p>
+            
+            <!-- Tempat menyematkan file HTML interaktif siswa -->
+            <div class="interactive-preview-container">
+                <iframe src="MPI_Pencegahan_Penanganan_Bullying.html" title="Media Interaktif Siswa"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- PILIHAN 3: FORM UPLOAD SISWA -->
+    <div id="view-upload" class="view-section">
+        <div class="card">
+            <h2>📤 Form Pengumpulan Tugas Kelompok</h2>
+            <form id="projekForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Nama Kelompok</label>
+                        <input type="text" id="namaKelompok" required placeholder="Contoh: Kelompok 1 - Melati">
+                    </div>
+                    <div class="form-group">
+                        <label>Judul Projek / Produk</label>
+                        <input type="text" id="judul" required placeholder="Contoh: Media Tata Surya Interaktif">
+                    </div>
+                    <div class="form-group">
+                        <label>Kategori Media</label>
+                        <select id="kategori">
+                            <option value="Media Digital">Media Digital / Web</option>
+                            <option value="Video Pembelajaran">Video Pembelajaran</option>
+                            <option value="Infografis">Infografis / Gambar</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Link File / Karya (YouTube / Drive / HTML)</label>
+                        <input type="url" id="linkFile" required placeholder="https://...">
+                    </div>
+                    <div class="form-group full-width">
+                        <button type="submit" id="btnSubmit" class="btn-submit">Kirim Projek ke Guru</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwsTI6pTy0RB5-Ntf1EdaoJy539KTKfF3SPy26xpzV-DUKxfeEKQaaDW7BKQYp_Bc41tA/exec";
+
+        // Fungsi untuk Mengganti Tampilan (Tab Switcher ala Google Sites)
+        function switchView(viewName) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+
+            document.getElementById('view-' + viewName).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        // Handle Submit Form
+        document.getElementById('projekForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnSubmit');
+            btn.innerText = "Mengirim...";
+            btn.disabled = true;
+
+            const data = {
+                action: "submitProjek",
+                namaKelompok: document.getElementById('namaKelompok').value,
+                judul: document.getElementById('judul').value,
+                kategori: document.getElementById('kategori').value,
+                linkFile: document.getElementById('linkFile').value
+            };
+
+            fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(data) })
+            .then(res => res.json())
+            .then(result => {
+                alert(result.message);
+                document.getElementById('projekForm').reset();
+                btn.innerText = "Kirim Projek ke Guru";
+                btn.disabled = false;
+            })
+            .catch(err => {
+                alert("Gagal mengirim data.");
+                btn.innerText = "Kirim Projek ke Guru";
+                btn.disabled = false;
+            });
+        });
+
+        function renderMediaEmbed(url) {
+            if (url.includes('youtube.com') || url.includes('youtu.be')) {
+                let videoId = '';
+                if (url.includes('youtu.be/')) {
+                    videoId = url.split('youtu.be/')[1].split('?')[0];
+                } else if (url.includes('watch?v=')) {
+                    videoId = url.split('watch?v=')[1].split('&')[0];
+                }
+                if (videoId) {
+                    return `<div class="media-container"><iframe src="https://www.youtube.com/embed/${videoId}" allowfullscreen></iframe></div>`;
+                }
+            } else if (url.match(/\.(jpeg|jpg|png|gif)$/i)) {
+                return `<div class="media-container"><img src="${url}" alt="Preview Karya"></div>`;
+            }
+            return `<a href="${url}" target="_blank" class="btn-link-demo">🔗 Buka Demo / File Projek</a>`;
+        }
+
+        function loadProjects() {
+            fetch(SCRIPT_URL + "?action=getPublicProjects")
+            .then(res => res.json())
+            .then(data => {
+                const container = document.getElementById('projectContainer');
+                container.innerHTML = "";
+                if (data.length === 0) {
+                    container.innerHTML = `<p style="text-align:center; grid-column: 1/-1; color: var(--text-muted);">Belum ada karya yang disetujui.</p>`;
+                    return;
+                }
+                data.forEach(p => {
+                    const card = document.createElement('div');
+                    card.className = 'project-card';
+                    card.innerHTML = `
+                        <div>
+                            <span class="badge">${p.kategori}</span>
+                            <h3>${p.judul}</h3>
+                            <p><b>Kelompok:</b> ${p.namaKelompok}</p>
+                            ${renderMediaEmbed(p.linkFile)}
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn-like" onclick="likeProject('${p.id}')">👍 Suka (${p.likes})</button>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            });
+        }
+
+        function likeProject(id) {
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: "addLike", id: id })
+            }).then(() => loadProjects());
+        }
+
+        loadProjects();
+    </script>
+</body>
+</html>
