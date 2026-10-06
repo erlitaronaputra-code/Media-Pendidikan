@@ -483,25 +483,26 @@ function postComment(idProjek) {
                 return;
             }
 
-            const data = {
+            const urlParams = new URLSearchParams({
                 action: "addComment",
                 idProjek: idProjek,
                 nama: namaInput.value,
                 komentar: textInput.value
-            };
+            });
 
-            // Menggunakan mode no-cors agar lolos dari blokir CORS browser saat mengirim ke Apps Script
-            fetch(SCRIPT_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                body: JSON.stringify(data)
+            // Mengirim data menggunakan parameter URL untuk menghindari blokir CORS
+            fetch(SCRIPT_URL + "?" + urlParams.toString(), {
+                method: 'GET'
             })
-            .then(() => {
+            .then(res => res.json())
+            .then(res => {
                 namaInput.value = "";
                 textInput.value = "";
-                setTimeout(() => loadComments(idProjek), 1000); // Muat ulang komentar setelah 1 detik
+                loadComments(idProjek);
             })
-            .catch(err => alert("Gagal mengirim komentar."));
+            .catch(err => {
+                alert("Gagal mengirim komentar.");
+            });
         }
 
         function likeProject(id) {
