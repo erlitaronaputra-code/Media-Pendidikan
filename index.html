@@ -18,7 +18,8 @@
         .badge { background: #e3f2fd; color: #0d47a1; padding: 3px 8px; border-radius: 4px; font-size: 12px; display: inline-block; margin-bottom: 8px; }
         .btn-like { background: #28a745; margin-right: 5px; }
         .btn-like:hover { background: #218838; }
-        .comment-section { margin-top: 10px; border-top: 1px solid #eee; padding-top: 10px; font-size: 13px; }
+        .media-container { width: 100%; height: 180px; margin-bottom: 10px; border-radius: 4px; overflow: hidden; background: #000; display: flex; align-items: center; justify-content: center; }
+        .media-container iframe, .media-container img { width: 100%; height: 100%; border: none; object-fit: cover; }
     </style>
 </head>
 <body>
@@ -41,13 +42,13 @@
             <div class="form-group">
                 <label>Kategori:</label>
                 <select id="kategori">
-                    <option value="Media Digital">Media Digital</option>
+                    <option value="Media Digital">Media Digital / Web</option>
                     <option value="Video Pembelajaran">Video Pembelajaran</option>
-                    <option value="Infografis">Infografis</option>
+                    <option value="Infografis">Infografis / Gambar</option>
                 </select>
             </div>
             <div class="form-group">
-                <label>Link File / Karya (Google Drive / Canva / YouTube):</label>
+                <label>Link File / Karya (YouTube, Google Drive, Canva, atau Web):</label>
                 <input type="url" id="linkFile" required placeholder="https://...">
             </div>
             <button type="submit" id="btnSubmit">Kirim Projek</button>
@@ -63,7 +64,6 @@
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwsTI6pTy0RB5-Ntf1EdaoJy539KTKfF3SPy26xpzV-DUKxfeEKQaaDW7BKQYp_Bc41tA/exec";
 
-        // Handle Submit Projek
         document.getElementById('projekForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const btn = document.getElementById('btnSubmit');
@@ -93,7 +93,29 @@
             });
         });
 
-        // Muat Data Projek Publik
+        // Fungsi Pendeteksi Media Otomatis
+        function renderMediaEmbed(url) {
+            // Cek apakah link YouTube
+            if (url.includes('youtube.com') || url.includes('youtu.be')) {
+                let videoId = '';
+                if (url.includes('youtu.be/')) {
+                    videoId = url.split('youtu.be/')[1].split('?')[0];
+                } else if (url.includes('watch?v=')) {
+                    videoId = url.split('watch?v=')[1].split('&')[0];
+                }
+                if (videoId) {
+                    return `<div class="media-container"><iframe src="https://www.youtube.com/embed/${videoId}" allowfullscreen></iframe></div>`;
+                }
+            } 
+            // Cek apakah link gambar langsung (.jpg, .png, .jpeg)
+            else if (url.match(/\.(jpeg|jpg|png|gif)$/i)) {
+                return `<div class="media-container"><img src="${url}" alt="Preview Karya"></div>`;
+            }
+            
+            // Default: Tampilkan tombol link jika berupa web lain / Google Drive / Canva
+            return `<a href="${url}" target="_blank" style="display:block; padding: 12px; background: #e3f2fd; color:#0d47a1; text-align:center; border-radius:4px; text-decoration:none; font-weight:bold; margin-bottom:10px;">🔗 Buka Demo / File Projek</a>`;
+        }
+
         function loadProjects() {
             fetch(SCRIPT_URL + "?action=getPublicProjects")
             .then(res => res.json())
@@ -107,12 +129,15 @@
                 data.forEach(p => {
                     const card = document.createElement('div');
                     card.className = 'project-card';
+                    
+                    let mediaHTML = renderMediaEmbed(p.linkFile);
+
                     card.innerHTML = `
                         <div>
                             <span class="badge">${p.kategori}</span>
                             <h3 style="margin: 5px 0 10px 0;">${p.judul}</h3>
                             <p style="font-size: 14px; color: #555; margin-bottom: 10px;"><b>Kelompok:</b> ${p.namaKelompok}</p>
-                            <a href="${p.linkFile}" target="_blank" style="display:inline-block; margin-bottom:15px; color:#007bff; text-decoration:none; font-weight:bold;">🔗 Lihat Karya / Demo</a>
+                            ${mediaHTML}
                         </div>
                         <div>
                             <button class="btn-like" onclick="likeProject('${p.id}')">👍 Suka (${p.likes})</button>
@@ -130,7 +155,6 @@
             }).then(() => loadProjects());
         }
 
-        // Jalankan saat halaman dibuka
         loadProjects();
     </script>
 </body>
