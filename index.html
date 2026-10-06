@@ -9,7 +9,7 @@
         :root {
             --primary: #4f46e5;
             --primary-hover: #4338ca;
-            --bg-color: #f8fafc;
+            --bg-color: #f1f5f9;
             --card-bg: #ffffff;
             --text-main: #1e293b;
             --text-muted: #64748b;
@@ -29,21 +29,25 @@
         header {
             text-align: center;
             margin-bottom: 30px;
+            background: linear-gradient(135deg, #4f46e5, #06b6d4);
+            padding: 40px 20px;
+            border-radius: 20px;
+            color: white;
+            box-shadow: 0 10px 25px rgba(79, 70, 229, 0.15);
         }
 
         header h1 {
-            font-size: 2.2rem;
-            color: var(--primary);
+            font-size: 2.4rem;
             margin-bottom: 8px;
             font-weight: 700;
         }
 
         header p {
-            color: var(--text-muted);
-            font-size: 1.05rem;
+            color: #e0e7ff;
+            font-size: 1.1rem;
         }
 
-        /* Navigasi Tab Sederhana (2 Pilihan) */
+        /* Navigasi Tab Warna-warni */
         .site-nav {
             display: flex;
             justify-content: center;
@@ -52,20 +56,22 @@
         }
 
         .tab-btn {
-            background: #e2e8f0;
+            background: #ffffff;
             color: var(--text-main);
-            border: none;
+            border: 2px solid var(--border-color);
             padding: 10px 24px;
             border-radius: 30px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
         }
 
         .tab-btn.active {
-            background: var(--primary);
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
             color: white;
-            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+            border-color: transparent;
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
         }
 
         .view-section {
@@ -88,8 +94,8 @@
         .card h2 {
             font-size: 1.3rem;
             margin-bottom: 20px;
-            color: var(--text-main);
-            border-bottom: 2px solid var(--bg-color);
+            color: var(--primary);
+            border-bottom: 2px solid #f1f5f9;
             padding-bottom: 10px;
         }
 
@@ -123,23 +129,36 @@
             width: 100%;
             padding: 12px 14px;
             box-sizing: border-box;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
             font-size: 0.95rem;
             font-family: inherit;
-            background-color: #fdfdfd;
+            background-color: #f8fafc;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background-color: #fff;
         }
 
         button.btn-submit {
-            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            background: linear-gradient(135deg, #10b981, #059669);
             color: white;
-            padding: 12px 24px;
+            padding: 14px 24px;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             cursor: pointer;
-            font-weight: 600;
+            font-weight: 700;
             font-size: 1rem;
             width: 100%;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+            transition: transform 0.2s;
+        }
+
+        button.btn-submit:hover {
+            transform: translateY(-2px);
         }
 
         .project-grid {
@@ -152,22 +171,50 @@
             background: var(--card-bg);
             border-radius: 16px;
             padding: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
             border: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
 
+        .project-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        }
+
+        /* Garis gradasi warna-warni di atas kartu */
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #4f46e5, #06b6d4, #10b981);
+        }
+
+        /* Badge kategori dengan warna dinamis */
         .badge {
-            background: #eef2ff;
-            color: var(--primary);
-            padding: 4px 10px;
+            padding: 5px 12px;
             border-radius: 20px;
             font-size: 0.75rem;
-            font-weight: 600;
+            font-weight: 700;
             display: inline-block;
             margin-bottom: 12px;
+            margin-top: 5px;
+        }
+        .badge-digital { background: #e0f2fe; color: #0284c7; }
+        .badge-video { background: #fee2e2; color: #dc2626; }
+        .badge-infografis { background: #fef3c7; color: #d97706; }
+
+        .project-card h3 {
+            font-size: 1.15rem;
+            margin: 0 0 8px 0;
+            color: var(--text-main);
         }
 
         .media-container {
@@ -197,6 +244,11 @@
             font-weight: 600;
             font-size: 0.85rem;
             margin-bottom: 15px;
+            transition: background 0.2s;
+        }
+
+        .btn-link-demo:hover {
+            background: #e2e8f0;
         }
 
         .card-footer {
@@ -217,6 +269,11 @@
             cursor: pointer;
             font-weight: 600;
             font-size: 0.85rem;
+            transition: background 0.2s;
+        }
+
+        .btn-like:hover {
+            background: #d1fae5;
         }
     </style>
 </head>
@@ -227,7 +284,7 @@
         <p>Pusat pameran digital karya kreatif dan media pembelajaran kelompok.</p>
     </header>
 
-    <!-- Tombol Pilihan Tampilan (2 Menu Utama) -->
+    <!-- Tombol Navigasi -->
     <div class="site-nav">
         <button class="tab-btn active" onclick="switchView('galeri')">🖼️ Lihat Galeri Karya</button>
         <button class="tab-btn" onclick="switchView('upload')">📤 Form Upload Siswa</button>
@@ -253,4 +310,55 @@
                     </div>
                     <div class="form-group">
                         <label>Judul Projek / Produk</label>
-                        <input type="text" id="judul" required placeholder="Contoh: Media Tata Surya
+                        <input type="text" id="judul" required placeholder="Contoh: Media Tata Surya Interaktif">
+                    </div>
+                    <div class="form-group">
+                        <label>Kategori Media</label>
+                        <select id="kategori">
+                            <option value="Media Digital">Media Digital / Web</option>
+                            <option value="Video Pembelajaran">Video Pembelajaran</option>
+                            <option value="Infografis">Infografis / Gambar</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Link File / Karya (YouTube / Drive / Canva / Web)</label>
+                        <input type="url" id="linkFile" required placeholder="https://...">
+                    </div>
+                    <div class="form-group full-width">
+                        <button type="submit" id="btnSubmit" class="btn-submit">Kirim Projek ke Guru 🚀</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwsTI6pTy0RB5-Ntf1EdaoJy539KTKfF3SPy26xpzV-DUKxfeEKQaaDW7BKQYp_Bc41tA/exec";
+
+        function switchView(viewName) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+
+            document.getElementById('view-' + viewName).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        document.getElementById('projekForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnSubmit');
+            btn.innerText = "Mengirim...";
+            btn.disabled = true;
+
+            const data = {
+                action: "submitProjek",
+                namaKelompok: document.getElementById('namaKelompok').value,
+                judul: document.getElementById('judul').value,
+                kategori: document.getElementById('kategori').value,
+                linkFile: document.getElementById('linkFile').value
+            };
+
+            fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(data) })
+            .then(res => res.json())
+            .then(result => {
+                alert(result.message);
+                document
