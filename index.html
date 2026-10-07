@@ -354,7 +354,7 @@
             // Jika input berupa tag HTML atau iframe lengkap
             if (trimmed.startsWith('<') && trimmed.includes('>')) {
                 return `<div class="media-container" style="position: relative; overflow: hidden; background: #ffffff;">
-                            <div style="width: 100%; height: 100%; overflow: auto;">
+                            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: scale(1); transform-origin: top left; overflow: auto;">
                                 ${trimmed}
                             </div>
                         </div>`;
