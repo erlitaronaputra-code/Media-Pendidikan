@@ -350,29 +350,34 @@
         });
 
         function renderMediaEmbed(inputVal) {
-            // Jika input berupa kode HTML lengkap (seperti tag <iframe...>)
-            if (inputVal.trim().startsWith('<') && inputVal.includes('>')) {
-                return `<div class="media-container" style="display: flex; align-items: center; justify-content: center;">${inputVal}</div>`;
+            let trimmed = inputVal.trim();
+            // Jika input berupa tag HTML atau iframe lengkap
+            if (trimmed.startsWith('<') && trimmed.includes('>')) {
+                return `<div class="media-container" style="position: relative; overflow: hidden; background: #ffffff;">
+                            <div style="width: 100%; height: 100%; overflow: auto;">
+                                ${trimmed}
+                            </div>
+                        </div>`;
             }
             // Jika input berupa link YouTube
-            else if (inputVal.includes('youtube.com') || inputVal.includes('youtu.be')) {
+            else if (trimmed.includes('youtube.com') || trimmed.includes('youtu.be')) {
                 let videoId = '';
-                if (inputVal.includes('youtu.be/')) {
-                    videoId = inputVal.split('youtu.be/')[1].split('?')[0];
-                } else if (inputVal.includes('watch?v=')) {
-                    videoId = inputVal.split('watch?v=')[1].split('&')[0];
+                if (trimmed.includes('youtu.be/')) {
+                    videoId = trimmed.split('youtu.be/')[1].split('?')[0];
+                } else if (trimmed.includes('watch?v=')) {
+                    videoId = trimmed.split('watch?v=')[1].split('&')[0];
                 }
                 if (videoId) {
                     return `<div class="media-container"><iframe src="https://www.youtube.com/embed/${videoId}" allowfullscreen></iframe></div>`;
                 }
             } 
             // Jika input berupa gambar
-            else if (inputVal.match(/\.(jpeg|jpg|png|gif)$/i)) {
-                return `<div class="media-container"><img src="${inputVal}" alt="Preview Karya"></div>`;
+            else if (trimmed.match(/\.(jpeg|jpg|png|gif)$/i)) {
+                return `<div class="media-container"><img src="${trimmed}" alt="Preview Karya"></div>`;
             }
             
             // Jika berupa link web biasa
-            return `<a href="${inputVal}" target="_blank" class="btn-link-demo">🔗 Buka Tautan / Media Interaktif</a>`;
+            return `<a href="${trimmed}" target="_blank" class="btn-link-demo">🔗 Buka Tautan / Media Interaktif</a>`;
         }
 
         function loadProjects() {
