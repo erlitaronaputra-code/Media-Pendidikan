@@ -353,9 +353,11 @@
             let trimmed = inputVal.trim();
             // Jika input berupa tag HTML atau iframe lengkap
             if (trimmed.startsWith('<') && trimmed.includes('>')) {
-                return `<div class="media-container" style="position: relative; overflow: hidden; background: #ffffff;">
-                            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: scale(1); transform-origin: top left; overflow: auto;">
-                                ${trimmed}
+                return `<div style="width: 100%;">
+                            <div style="width: 100%; height: 320px; border-radius: 10px; overflow: hidden; background: #ffffff; border: 1px solid var(--border-color); margin-bottom: 10px; position: relative;">
+                                <div style="width: 100%; height: 100%; overflow: auto;">
+                                    ${trimmed}
+                                </div>
                             </div>
                         </div>`;
             }
@@ -378,6 +380,7 @@
             
             // Jika berupa link web biasa
             return `<a href="${trimmed}" target="_blank" class="btn-link-demo">🔗 Buka Tautan / Media Interaktif</a>`;
+            <iframe src="URL_FILE_HTML_ANDA" style="width:100%; height:100%; border:none;"></iframe>
         }
 
         function loadProjects() {
