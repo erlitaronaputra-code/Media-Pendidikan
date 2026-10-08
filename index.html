@@ -198,8 +198,13 @@
 
         .project-card h3 {
             font-size: 1.15rem;
-            margin: 0 0 8px 0;
+            margin: 0 0 4px 0;
             color: var(--text-main);
+        }
+
+        /* Pembatas bagian informasi teks agar tidak terpengaruh embed */
+        .card-header-info {
+            margin-bottom: 15px;
         }
 
         .media-container {
@@ -398,51 +403,3 @@
 
                 const card = document.createElement('div');
                 card.className = 'project-card';
-                card.innerHTML = `
-                    <div>
-                        <span class="badge ${badgeClass}">${p.kategori}</span>
-                        <h3>${p.judul}</h3>
-                        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px;"><b>Kelompok:</b> ${p.namaKelompok}</p>
-                        ${renderMediaEmbed(p.linkFile)}
-                    </div>
-                    <div class="card-footer">
-                        <button class="btn-like" onclick="likeProject('${p.id}')">👍 Suka (${p.likes})</button>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        function loadProjects() {
-            fetch(SCRIPT_URL + "?action=getPublicProjects")
-            .then(res => res.json())
-            .then(data => {
-                allProjectsData = data || [];
-                displayProjects(allProjectsData);
-            })
-            .catch(err => {
-                const container = document.getElementById('projectContainer');
-                container.innerHTML = `<p style="text-align:center; grid-column: 1/-1; color: var(--text-muted);">Gagal memuat data galeri.</p>`;
-            });
-        }
-
-        function filterProjects() {
-            const keyword = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = allProjectsData.filter(p => 
-                p.namaKelompok.toLowerCase().includes(keyword) || 
-                p.judul.toLowerCase().includes(keyword)
-            );
-            displayProjects(filtered);
-        }
-
-        function likeProject(id) {
-            fetch(SCRIPT_URL, {
-                method: 'POST',
-                body: JSON.stringify({ action: "addLike", id: id })
-            }).then(() => loadProjects());
-        }
-
-        loadProjects();
-    </script>
-</body>
-</html>
