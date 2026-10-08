@@ -264,7 +264,16 @@
         <button class="tab-btn active" onclick="switchView('galeri', this)">🖼️ Lihat Galeri Karya</button>
         <button class="tab-btn" onclick="switchView('upload', this)">📤 Form Upload Peserta</button>
     </div>
+<div id="view-galeri" class="view-section active">
+    <h2 style="text-align:center; margin-bottom:20px;">Daftar Karya Terpilih</h2>
+    
+    <!-- Kolom Pencarian -->
+    <div style="max-width: 400px; margin: 0 auto 25px auto;">
+        <input type="text" id="searchInput" placeholder="🔍 Cari nama kelompok atau judul projek..." onkeyup="filterProjects()" style="padding: 12px 16px; border-radius: 30px; border: 2px solid var(--border-color); width: 100%; font-size: 0.95rem; background: #ffffff;">
+    </div>
 
+    <div id="projectContainer" class="project-grid"></div>
+</div>
     <!-- PILIHAN 1: MODE GALERI KARTU -->
     <div id="view-galeri" class="view-section active">
         <h2 style="text-align:center; margin-bottom:20px;">Daftar Karya Terpilih</h2>
@@ -428,6 +437,21 @@
         }
 
         loadProjects();
+        let allProjectsData = []; // Variabel penampung data global
+
+// Simpan data saat berhasil dimuat di loadProjects()
+// Ubah bagian penampungan data di dalam loadProjects menjadi:
+// allProjectsData = data;
+// renderProjects(allProjectsData);
+
+function filterProjects() {
+    const keyword = document.getElementById('searchInput').value.toLowerCase();
+    const filtered = allProjectsData.filter(p => 
+        p.namaKelompok.toLowerCase().includes(keyword) || 
+        p.judul.toLowerCase().includes(keyword)
+    );
+    displayProjects(filtered);
+}
     </script>
 </body>
 </html>
