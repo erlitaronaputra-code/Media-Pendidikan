@@ -204,18 +204,26 @@
 
         .media-container {
             width: 100%;
-            height: 350px;
+            height: 380px;
             margin-bottom: 15px;
             border-radius: 10px;
             overflow: hidden;
             background: #ffffff;
             border: 1px solid var(--border-color);
+            position: relative;
         }
 
-        .media-container iframe, .media-container img, .media-container div {
+        .media-container iframe {
             width: 100%;
             height: 100%;
             border: none;
+            display: block;
+        }
+
+        .media-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .btn-link-demo {
@@ -314,7 +322,7 @@
     </div>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxRe2_vCl99tcSRr-Lb-WWB_erSyBz5RVsYAgimUYAQtJtOxAiHLvHv-MXEv1ujgsiAEA/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxGpib18ijFDXAHSMkhkK8jDBYJEhP4EDO94sro4ZSiQMPYbXl0yy29tIQhbVTERxXbaw/exec";
         let allProjectsData = [];
 
         function switchView(viewName, element) {
@@ -359,7 +367,7 @@
         function renderMediaEmbed(inputVal) {
             let trimmed = inputVal.trim();
             if (trimmed.startsWith('<') && trimmed.includes('>')) {
-                return `<div class="media-container" style="overflow: auto;">${trimmed}</div>`;
+                return `<div class="media-container">${trimmed}</div>`;
             } else if (trimmed.includes('youtube.com') || trimmed.includes('youtu.be')) {
                 let videoId = '';
                 if (trimmed.includes('youtu.be/')) {
