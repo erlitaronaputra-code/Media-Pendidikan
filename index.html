@@ -339,12 +339,20 @@
             btn.innerText = "Mengirim...";
             btn.disabled = true;
 
+            // Ambil nilai link dari input
+            let rawLink = document.getElementById('linkFile').value.trim();
+            
+            // Otomatis tambahkan https:// jika peserta tidak mengetikannya
+            if (rawLink && !rawLink.startsWith('http://') && !rawLink.startsWith('https://')) {
+                rawLink = 'https://' + rawLink;
+            }
+
             const data = {
                 action: "submitProjek",
                 namaKelompok: document.getElementById('namaKelompok').value,
                 judul: document.getElementById('judul').value,
                 kategori: document.getElementById('kategori').value,
-                linkFile: document.getElementById('linkFile').value
+                linkFile: rawLink
             };
 
             fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(data) })
