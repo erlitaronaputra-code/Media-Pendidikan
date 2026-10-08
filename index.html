@@ -156,7 +156,7 @@
 
         .project-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 24px;
         }
 
@@ -198,50 +198,43 @@
 
         .project-card h3 {
             font-size: 1.15rem;
-            margin: 0 0 4px 0;
+            margin: 0 0 6px 0;
             color: var(--text-main);
-        }
-
-        /* Pembatas bagian informasi teks agar tidak terpengaruh embed */
-        .card-header-info {
-            margin-bottom: 15px;
         }
 
         .media-container {
             width: 100%;
-            height: 380px;
+            height: 180px;
             margin-bottom: 15px;
             border-radius: 10px;
             overflow: hidden;
-            background: #ffffff;
-            border: 1px solid var(--border-color);
-            position: relative;
+            background: #000;
         }
 
-        .media-container iframe {
+        .media-container iframe, .media-container img {
             width: 100%;
             height: 100%;
             border: none;
-            display: block;
-        }
-
-        .media-container img {
-            width: 100%;
-            height: 100%;
             object-fit: cover;
         }
 
         .btn-link-demo {
             display: block;
-            padding: 10px;
-            background: #f1f5f9;
-            color: var(--primary);
+            padding: 12px;
+            background: linear-gradient(135deg, #4f46e5, #06b6d4);
+            color: white;
             text-align: center;
-            border-radius: 8px;
+            border-radius: 10px;
             text-decoration: none;
-            font-weight: 600;
-            font-size: 0.85rem;
+            font-weight: 700;
+            font-size: 0.9rem;
             margin-bottom: 15px;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+            transition: opacity 0.2s;
+        }
+
+        .btn-link-demo:hover {
+            opacity: 0.9;
         }
 
         .card-footer {
@@ -315,8 +308,8 @@
                         </select>
                     </div>
                     <div class="form-group full-width">
-                        <label>Link File atau Kode Embed (HTML / iFrame / Canva / YouTube)</label>
-                        <textarea id="linkFile" rows="3" required placeholder="Tempel URL biasa atau kode embed lengkap (contoh: <iframe src=...'></iframe>) di sini..."></textarea>
+                        <label>Link Tautan Karya (YouTube / Drive / Canva / Web / HTML)</label>
+                        <input type="url" id="linkFile" required placeholder="https://...">
                     </div>
                     <div class="form-group full-width">
                         <button type="submit" id="btnSubmit" class="btn-submit">Kirim Projek ke Guru 🚀</button>
@@ -369,24 +362,21 @@
             });
         });
 
-        function renderMediaEmbed(inputVal) {
-            let trimmed = inputVal.trim();
-            if (trimmed.startsWith('<') && trimmed.includes('>')) {
-                return `<div class="media-container">${trimmed}</div>`;
-            } else if (trimmed.includes('youtube.com') || trimmed.includes('youtu.be')) {
+        function renderMediaEmbed(url) {
+            if (url.includes('youtube.com') || url.includes('youtu.be')) {
                 let videoId = '';
-                if (trimmed.includes('youtu.be/')) {
-                    videoId = trimmed.split('youtu.be/')[1].split('?')[0];
-                } else if (trimmed.includes('watch?v=')) {
-                    videoId = trimmed.split('watch?v=')[1].split('&')[0];
+                if (url.includes('youtu.be/')) {
+                    videoId = url.split('youtu.be/')[1].split('?')[0];
+                } else if (url.includes('watch?v=')) {
+                    videoId = url.split('watch?v=')[1].split('&')[0];
                 }
                 if (videoId) {
                     return `<div class="media-container"><iframe src="https://www.youtube.com/embed/${videoId}" allowfullscreen></iframe></div>`;
                 }
-            } else if (trimmed.match(/\.(jpeg|jpg|png|gif)$/i)) {
-                return `<div class="media-container"><img src="${trimmed}" alt="Preview Karya"></div>`;
+            } else if (url.match(/\.(jpeg|jpg|png|gif)$/i)) {
+                return `<div class="media-container"><img src="${url}" alt="Preview Karya"></div>`;
             }
-            return `<a href="${trimmed}" target="_blank" class="btn-link-demo">🔗 Buka Tautan / Media Interaktif</a>`;
+            return `<a href="${url}" target="_blank" class="btn-link-demo">🎮 Buka & Operasikan Media Interaktif</a>`;
         }
 
         function displayProjects(dataArray) {
@@ -403,3 +393,51 @@
 
                 const card = document.createElement('div');
                 card.className = 'project-card';
+                card.innerHTML = `
+                    <div>
+                        <span class="badge ${badgeClass}">${p.kategori}</span>
+                        <h3>${p.judul}</h3>
+                        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px;"><b>Kelompok:</b> ${p.namaKelompok}</p>
+                        ${renderMediaEmbed(p.linkFile)}
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn-like" onclick="likeProject('${p.id}')">👍 Suka (${p.likes})</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function loadProjects() {
+            fetch(SCRIPT_URL + "?action=getPublicProjects")
+            .then(res => res.json())
+            .then(data => {
+                allProjectsData = data || [];
+                displayProjects(allProjectsData);
+            })
+            .catch(err => {
+                const container = document.getElementById('projectContainer');
+                container.innerHTML = `<p style="text-align:center; grid-column: 1/-1; color: var(--text-muted);">Gagal memuat data galeri.</p>`;
+            });
+        }
+
+        function filterProjects() {
+            const keyword = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = allProjectsData.filter(p => 
+                p.namaKelompok.toLowerCase().includes(keyword) || 
+                p.judul.toLowerCase().includes(keyword)
+            );
+            displayProjects(filtered);
+        }
+
+        function likeProject(id) {
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: "addLike", id: id })
+            }).then(() => loadProjects());
+        }
+
+        loadProjects();
+    </script>
+</body>
+</html>
