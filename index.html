@@ -379,10 +379,12 @@
                     videoId = url.split('watch?v=')[1].split('&')[0];
                 } else if (url.includes('embed/')) {
                     videoId = url.split('embed/')[1].split('?')[0];
+                } else if (url.includes('/shorts/')) {
+                    videoId = url.split('/shorts/')[1].split('?')[0];
                 }
                 
                 if (videoId) {
-                    return `<div class="media-container"><iframe src="https://www.youtube.com/embed/${videoId}?enablejsapi=1&origin=*0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`;
+                    return `<div class="media-container"><iframe src="https://www.youtube.com/embed/${videoId}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`;
                 }
             } else if (url.match(/\.(jpeg|jpg|png|gif)$/i)) {
                 return `<div class="media-container"><img src="${url}" alt="Preview Karya"></div>`;
